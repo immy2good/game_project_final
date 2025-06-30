@@ -21,11 +21,27 @@ var game_score;
 var flagpole;
 var lives;
 var platforms;
+var jumpSound; // Add jump sound variable
+
+/* Preload Function */
+function preload() {
+  // Load jump sound - you can replace 'jump.wav' with your own sound file
+  // For now, we'll create the sound programmatically if no file exists
+  jumpSound = null; // Will be created in setup if no file is found
+}
 
 /* Setup Function */
 function setup() {
   createCanvas(1500, 576);
   lives = 3; // Initialize lives properly
+
+  // Create a simple jump sound using p5.js audio synthesis if no sound file is loaded
+  if (!jumpSound) {
+    jumpSound = createOscillator("sine");
+    jumpSound.freq(440); // A4 note
+    jumpSound.amp(0);
+  }
+
   startGame();
 }
 
@@ -195,6 +211,20 @@ function keyPressed() {
   ) {
     gameChar_y -= 100;
     isFalling = true;
+    playJumpSound(); // Play jump sound when character jumps
+  }
+}
+
+// Function to play jump sound
+function playJumpSound() {
+  if (jumpSound) {
+    // Create a quick beep sound effect
+    jumpSound.start();
+    jumpSound.amp(0.1, 0.01); // Quick fade in
+    jumpSound.freq(600, 0.1); // Start at 600Hz and slide down
+    jumpSound.freq(300, 0.3); // Slide to 300Hz over 0.3 seconds
+    jumpSound.amp(0, 0.3); // Fade out over 0.3 seconds
+    jumpSound.stop(0.4); // Stop after 0.4 seconds
   }
 }
 
